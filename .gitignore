@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+runs/call_*/
+recordings/*.mp3
+recordings/*.ogg
+*.egg-info/
+venv/
