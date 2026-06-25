@@ -22,8 +22,10 @@ independent of any configuration value.
    VAPI_API_KEY=your-vapi-key
    VAPI_PHONE_NUMBER_ID=your-vapi-phone-number-id
    ANTHROPIC_API_KEY=your-anthropic-key
-   TARGET_PHONE_NUMBER=+18054398008
    ```
+
+   The call target (`+18054398008`) is hard-coded in `app/caller.py` and is not
+   configurable via environment variables, by design.
 
 5. Create a virtual environment and install dependencies:
 

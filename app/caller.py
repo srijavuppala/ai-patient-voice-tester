@@ -79,5 +79,5 @@ def poll_call(call_id: str, settings: Settings, interval: float = 5.0, timeout: 
 
 
 def run_scenario_call(scenario: Scenario, settings: Settings) -> dict:
-    call_id = place_call(scenario, settings, target_number=settings.target_phone_number)
+    call_id = place_call(scenario, settings, target_number=ALLOWED_TARGET_NUMBER)
     return poll_call(call_id, settings)

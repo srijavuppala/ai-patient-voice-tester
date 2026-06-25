@@ -26,9 +26,7 @@ def make_scenario():
 
 
 def make_settings():
-    return Settings(
-        vapi_api_key="k", vapi_phone_number_id="p", anthropic_api_key="a", target_phone_number="+18054398008"
-    )
+    return Settings(vapi_api_key="k", vapi_phone_number_id="p", anthropic_api_key="a")
 
 
 EVALUATION_JSON = json.dumps(
