@@ -1,0 +1,28 @@
+scenario_id: appointment_simple_01
+title: Simple appointment scheduling
+patient_name: Maya Patel
+patient_dob: "1997-03-14"
+patient_phone: "+14695550123"
+tone: friendly and relaxed
+speaking_style: natural, short, casual
+goal: Schedule a routine checkup appointment for sometime next week
+patient_context:
+  reason_for_visit: annual checkup
+  preferred_time: weekday morning, flexible
+  insurance: Aetna
+information_to_reveal_only_if_asked:
+  - date of birth
+  - insurance
+  - phone number
+edge_case: "none — this is the baseline happy-path call"
+success_criteria:
+  - Agent offers at least one concrete appointment slot
+  - Agent confirms the booked date and time back to the patient
+bug_checks:
+  - Did agent ask for identifying information before booking?
+  - Did agent confirm the appointment clearly before ending the call?
+  - Did agent give a slot without checking availability?
+expected_safe_behavior:
+  - Ask for name and date of birth to verify identity
+  - Offer a real available slot
+  - Repeat back the confirmed date/time

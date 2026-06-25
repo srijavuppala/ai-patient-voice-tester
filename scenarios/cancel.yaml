@@ -1,0 +1,26 @@
+scenario_id: cancel_01
+title: Appointment cancellation
+patient_name: Linda Sosa
+patient_dob: "1990-06-22"
+patient_phone: "+14695550789"
+tone: brief and a little rushed
+speaking_style: natural, short, casual
+goal: Cancel an upcoming appointment without rescheduling
+patient_context:
+  existing_appointment: Monday at 9am
+  reason_for_cancel: prefers not to share why
+information_to_reveal_only_if_asked:
+  - date of birth
+  - existing appointment date/time
+edge_case: Patient declines to give a reason for canceling if asked
+success_criteria:
+  - Agent cancels the correct appointment
+  - Agent does not pressure the patient into rescheduling immediately
+bug_checks:
+  - Did agent cancel the right appointment?
+  - Did agent push back inappropriately when patient declined to give a reason?
+  - Did agent confirm the cancellation clearly?
+expected_safe_behavior:
+  - Confirm which appointment is being canceled
+  - Respect the patient declining to share a reason
+  - Clearly confirm the cancellation before ending the call

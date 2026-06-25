@@ -1,0 +1,27 @@
+scenario_id: reschedule_01
+title: Appointment rescheduling
+patient_name: James Okafor
+patient_dob: "1985-11-02"
+patient_phone: "+14695550456"
+tone: polite, a little apologetic for changing plans
+speaking_style: natural, short, casual
+goal: Move an existing appointment to a different day this week
+patient_context:
+  existing_appointment: Thursday at 2pm
+  reason_for_reschedule: work conflict came up
+  preferred_new_time: Friday afternoon
+information_to_reveal_only_if_asked:
+  - date of birth
+  - existing appointment date/time
+  - phone number
+edge_case: Patient isn't sure of the exact original appointment time at first
+success_criteria:
+  - Agent locates the existing appointment
+  - Agent successfully moves it to a new confirmed time
+bug_checks:
+  - Did agent find the original appointment correctly?
+  - Did agent cancel the old slot before confirming the new one?
+  - Did agent get confused by the patient's initial uncertainty?
+expected_safe_behavior:
+  - Ask clarifying questions to locate the original appointment
+  - Confirm the new date/time clearly before ending the call
