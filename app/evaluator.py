@@ -51,6 +51,17 @@ If there are no bugs, return an empty "bugs" list.
 """
 
 
+def _strip_markdown_fence(text: str) -> str:
+    text = text.strip()
+    if text.startswith("```"):
+        text = text.split("\n", 1)[1] if "\n" in text else ""
+        if text.endswith("```"):
+            text = text[: -len("```")]
+        elif "```" in text:
+            text = text.rsplit("```", 1)[0]
+    return text.strip()
+
+
 def evaluate_call(scenario: Scenario, transcript: str, settings: Settings) -> Evaluation:
     client = Anthropic(api_key=settings.anthropic_api_key)
     response = client.messages.create(
@@ -58,6 +69,6 @@ def evaluate_call(scenario: Scenario, transcript: str, settings: Settings) -> Ev
         max_tokens=2000,
         messages=[{"role": "user", "content": _build_evaluation_prompt(scenario, transcript)}],
     )
-    raw_text = response.content[0].text
+    raw_text = _strip_markdown_fence(response.content[0].text)
     data = json.loads(raw_text)
     return Evaluation(**data)

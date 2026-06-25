@@ -36,7 +36,7 @@ def place_call(scenario: Scenario, settings: Settings, target_number: str) -> st
                 "model": "gpt-4o-mini",
                 "messages": [{"role": "system", "content": build_system_prompt(scenario)}],
             },
-            "voice": {"provider": "playht", "voiceId": "jennifer"},
+            "voice": {"provider": "vapi", "voiceId": "Elliot"},
             "transcriber": {"provider": "deepgram", "model": "nova-2"},
         },
     }

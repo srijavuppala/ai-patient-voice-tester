@@ -68,3 +68,20 @@ def test_evaluate_call_parses_llm_response_into_evaluation_model():
     assert evaluation.hallucination_detected is True
     assert evaluation.bugs[0].severity == "high"
     assert "Sunday" in evaluation.bugs[0].evidence
+
+
+def test_evaluate_call_strips_markdown_code_fence_around_json():
+    scenario = make_scenario()
+    settings = make_settings()
+    transcript = "AGENT: Sure, you're booked for Sunday at 10am.\nPATIENT: Great, thank you!"
+
+    fenced_text = f"```json\n{EVALUATION_JSON}\n```"
+    fake_response = MagicMock()
+    fake_response.content = [MagicMock(text=fenced_text)]
+
+    with patch("app.evaluator.Anthropic") as MockAnthropic:
+        MockAnthropic.return_value.messages.create.return_value = fake_response
+        evaluation = evaluate_call(scenario, transcript, settings)
+
+    assert evaluation.scenario_id == "weekend_edge_case_01"
+    assert evaluation.bugs[0].title == "Agent confirmed a Sunday appointment"
