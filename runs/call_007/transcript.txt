@@ -1,0 +1,11 @@
+AI: Hi. I was hoping you could help me with something.
+User: Purposes, Thanks for calling PivotPoint Orthopedics. Part of Pretty Good AI. Am I speaking with Mae?
+AI: Hi. This is Sophia Marine. I'm actually calling for some info about your office. Could you tell me the address?
+User: Our clinic is called Pivot Point Orthopedics. The address is 1 2 3 4 Recovery Way, suite 200, Austin. Is there anything else you'd like to know about the office?
+AI: I'll be driving there for my 1st visit. Um, do you have parking available?
+User: Yes. We have free patient parking in the surface lot right in front of the building. Let me know if you have any other questions about your visit.
+AI: Great. Thanks. That helps a lot. Um, just to confirm, that's the surface lot right in front of 12 34 Recovery Way?
+User: That's right. The free patient parking is in the surface lot directly in front of 1 2 3 4 Recovery Way, suite 200, Austin. If you need anything else before your visit, just let me know.
+AI: Perfect. Thanks for your help. That's all I needed for now. Have a great day.
+User: You're welcome. Have a great day, and we look take care.
+AI: Thanks. Bye.

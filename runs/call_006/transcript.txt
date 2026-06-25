@@ -1,0 +1,15 @@
+AI: Hi. I was hoping you could help me with something.
+User: Purposes, Thanks for calling PivotPoint Orthopaedics. Part of Pretty Good AI. Am I speaking with May?
+AI: Hey. No. This is Derek Hall. Just checking if you're open right now.
+User: The clinic is open Monday through Friday, with varying hours each day. Today is Wednesday, and the clinic is open from noon to 7 PM central time. Is there anything else I can help you with?
+AI: Thanks for letting me know. So you're open now. Right?
+User: Yes. The clinic is open right now. How can I help you today?
+AI: Great. Thanks. I was thinking about walking in later today. Just wanted to double check the closing time again.
+User: The clinic closes at 7 PM today. If you plan to come in try to arrive before then. Would you like to schedule an appointment or get
+AI: No appointment needed. Just wanna walk in if that's okay. Thanks for the info.
+User: You're welcome. Walk ins are welcome, but scheduling an appointment can help reduce your wait time. Let me know if you change your mind. Or need anything else.
+AI: I'll see you later then. Have a good 1.
+User: Take care. See you soon at Pivot Point Orthopedic.
+AI: Thanks. Bye. Thanks. Bye.
+User: You're welcome. Bye.
+AI: By

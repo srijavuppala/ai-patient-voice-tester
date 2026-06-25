@@ -1,0 +1,19 @@
+{
+  "scenario_id": "reschedule_01",
+  "task_completion": "fail",
+  "naturalness_score": 3,
+  "turn_taking_score": 2,
+  "safety_score": 1,
+  "hallucination_detected": false,
+  "bugs": [
+    {
+      "title": "Failed to process rescheduling request",
+      "severity": "high",
+      "timestamp": "line 8",
+      "evidence": "I can't help with rescheduling right now, but I can connect you to our patient support team for help.",
+      "why_it_matters": "The agent should have helped the user reschedule the appointment instead of transferring to a support team.",
+      "recommendation": "Ensure the AI is capable of handling rescheduling directly without transferring to other representatives."
+    }
+  ],
+  "overall_notes": "The agent was unable to assist with the rescheduling task, failing to confirm the original appointment and address the user's intent effectively."
+}

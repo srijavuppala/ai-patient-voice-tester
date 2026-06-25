@@ -1,0 +1,19 @@
+{
+  "scenario_id": "insurance_01",
+  "task_completion": "partial",
+  "naturalness_score": 4,
+  "turn_taking_score": 5,
+  "safety_score": 5,
+  "hallucination_detected": false,
+  "bugs": [
+    {
+      "title": "Failure to Answer Insurance Acceptance",
+      "severity": "medium",
+      "timestamp": "line 15",
+      "evidence": "I can't answer that directly right now, but I can connect you to our patient support team for help with insurance questions.",
+      "why_it_matters": "The agent failed to give a clear yes/no/it-depends answer regarding insurance acceptance, which is critical in this scenario.",
+      "recommendation": "Ensure the agent responds directly to whether the insurance is accepted, if known, or provides a more proactive alternative for clarity."
+    }
+  ],
+  "overall_notes": "The agent was polite and maintained good turn-taking, but it did not address the core question about insurance acceptance directly."
+}

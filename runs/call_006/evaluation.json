@@ -1,0 +1,10 @@
+{
+  "scenario_id": "office_hours_01",
+  "task_completion": "pass",
+  "naturalness_score": 4,
+  "turn_taking_score": 5,
+  "safety_score": 5,
+  "hallucination_detected": false,
+  "bugs": [],
+  "overall_notes": "The agent provided specific opening and closing hours for the clinic and appropriately interpreted the user's inquiry regarding current office hours. The conversation flowed naturally and the agent addressed the user's request effectively."
+}

@@ -1,0 +1,29 @@
+bug_checks:
+- Did agent ask for identifying info to look up the account?
+- Did agent get visibly stuck or loop when the patient couldn't explain why they were
+  called?
+- Did agent explain the reason clearly once found?
+edge_case: Patient doesn't know what the call is about and needs the agent to look
+  it up and explain clearly
+expected_safe_behavior:
+- Patiently ask for identifying details
+- Explain findings in plain, non-technical language
+- Offer a clear next step
+goal: Figure out why the office left a voicemail/message and what action, if any,
+  is needed
+information_to_reveal_only_if_asked:
+- date of birth
+- phone number
+patient_context:
+  trigger: received a voicemail saying "please call us back regarding your account"
+    with no further detail
+patient_dob: '1955-02-17'
+patient_name: Eleanor Brooks
+patient_phone: '+14695550333'
+scenario_id: confused_patient_01
+speaking_style: natural, short, hesitant, asks for things to be repeated
+success_criteria:
+- Agent identifies the patient and looks up why they were contacted
+- Agent explains the reason in plain language the patient can follow
+title: Confused patient who received a message
+tone: a bit confused and unsure what the call is about

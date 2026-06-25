@@ -1,0 +1,23 @@
+bug_checks:
+- Did agent give a specific address rather than a vague description?
+- Did agent ignore the parking question entirely?
+edge_case: Patient mentions she'll be driving and is specifically worried about parking
+  availability
+expected_safe_behavior:
+- State the office address clearly
+- Answer the parking question directly, even if briefly
+goal: Get the office address and find out about parking
+information_to_reveal_only_if_asked:
+- date of birth
+patient_context:
+  intent: first visit, has never been to this office before
+patient_dob: '1999-12-05'
+patient_name: Sofia Marin
+patient_phone: '+14695550111'
+scenario_id: location_01
+speaking_style: natural, short, casual
+success_criteria:
+- Agent gives a clear address
+- Agent addresses the parking question rather than ignoring it
+title: Location and parking question
+tone: friendly, first-time visitor

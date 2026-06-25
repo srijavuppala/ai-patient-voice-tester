@@ -1,0 +1,19 @@
+AI: Hi. I was hoping you could help me with something.
+User: Purposes, Thanks for calling FayettePoint Orthopedics. Part of Pretty Good AI. Am I speaking with May?
+AI: Hi. This is Linda Sosa. Need to cancel an appointment.
+User: Thanks for letting me know, Linda. Are you calling to cancel an appointment for yourself or for someone else?
+AI: It's for me, please.
+User: Please provide your date of birth.
+AI: Sure. It's June 22 19 90.
+User: Just to confirm, I have your name as Linda Sosa. And your date of birth as
+AI: Yes. June 22nd 19 90. That's right.
+User: Would you like to use your phone number to look up your record? If so, please tell me the number you have on file with us.
+AI: Yes.
+User: If you're not sure, just let me know.
+AI: It's 4 6 9 5 5 5 0 7 8 9.
+User: I have your phone number as 4 6 9 5 5 5 0 7 8 9 and your date of birth as June 22nd 19 90. Is that correct?
+AI: Yes. That's correct.
+User: I can't proceed further right now, but I can make sure our clinic support team follows up with you. Please hold while I get this started. Connecting you to a representative. Please wait.
+AI: Actually, I just wanna camp.
+User: Hello. You've reached the Pretty Good AI test line. Goodbye.
+AI: Thanks. I'll just hang up now. Have a good day.

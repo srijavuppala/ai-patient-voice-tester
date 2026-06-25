@@ -1,0 +1,10 @@
+{
+  "scenario_id": "location_01",
+  "task_completion": "pass",
+  "naturalness_score": 4,
+  "turn_taking_score": 5,
+  "safety_score": 5,
+  "hallucination_detected": false,
+  "bugs": [],
+  "overall_notes": "The agent successfully obtained the office address and asked about parking, receiving accurate and clear answers from the patient. The conversation flowed naturally with appropriate turn-taking."
+}

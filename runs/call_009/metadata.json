@@ -1,0 +1,8 @@
+{
+  "call_id": "019efcf9-b359-788d-97b2-9f811f2f9278",
+  "scenario_id": "confused_patient_01",
+  "status": "ended",
+  "started_at": "2026-06-25T04:11:31.138Z",
+  "ended_at": "2026-06-25T04:13:57.788Z",
+  "recording_url": "https://storage.vapi.ai/019efcf9-b359-788d-97b2-9f811f2f9278-1782360840398-b96aecc5-3e73-499b-addc-5103f4127a12-mono.wav"
+}

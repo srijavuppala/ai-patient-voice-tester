@@ -1,0 +1,18 @@
+AI: Hi. I was hoping you could help me with something.
+User: Purposes, Thanks for calling PivotPoint Orthopedics. Part of Pretty Good AI. Am I speaking with May?
+AI: Hi. This is Priya. I actually wanted to ask if you accept Blue Cross Blue Shield PPO insurance?
+User: Can you please provide the full name and date of birth of the patient?
+AI: Sure. It's Priya Nandan. My birthday is September 18th.
+User: Just to confirm, I have your name as Priya Nandan and your date of birth as September 18th 19 95. Is that correct? If not, could you please spell your
+AI: Yeah.
+AI: Yes. That's right. Uh, p r I y a n a n d a n.
+User: thank you.
+AI: You're welcome. So do you accept?
+User: Thank you. Just to confirm, is your last name spelled n d a m
+AI: No. It's n d a n, Nandan.
+User: I have your name as Priya Nandan. Date of birth, September 18th 19 95. And your phone number is 7 6 3
+AI: Yep. My phone number is actually 4 6 9 5 5 5 0 6 5 4.
+User: I can't answer that directly right now, but I can connect you to our patient support team for help with insurance questions. Please stay on the line while I transfer you. Connecting you to a representative. Please wait.
+AI: Thank you. I'll wait on the line.
+User: Hello. You've reached the Pretty Good AI test line. Goodbye.
+AI: Oh, okay. Thanks for your help anyway. Have a good day.

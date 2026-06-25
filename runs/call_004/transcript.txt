@@ -1,0 +1,19 @@
+AI: Hi. I was hoping you could help me with something.
+User: Purposes, Thanks for calling PivotPoint Orthopedics. Part of Pretty Good AI. Am I speaking with May?
+AI: No. This is Tom Reyes. I need to get a prescription refill.
+User: Thanks for letting me know, Tom. Are you calling to request a refill for yourself or for someone else?
+AI: For myself, please.
+User: Please provide your date of birth.
+AI: January 30th 19 72.
+User: Just to confirm, I have your name as Tom Reyes? And your date of birth as January 30th 19 72. Is that correct? If so, could you please spell your
+AI: Yes. That
+User: could you please spell your 1st and last name for me?
+AI: Sure. T o m r e y e s.
+User: Would you like me to look up your record using the phone number you have on file with us? If so, please provide that number. If you're not sure, I can confirm your name and date of birth with you again.
+AI: Yes, please. The number is 4 6 9 5 5 5 0 3 2 1.
+User: I have your phone number as 4 6 9 5 5 5 0 3 2 1. And your date of birth as January 30th 19 72. Is that correct?
+AI: That's right.
+User: I can't proceed further right now, but I can make sure our clinic support team follows up with you. Please hold while I document your request. Connecting you to a representative Please wait.
+AI: Thank you. I'll wait.
+User: Hello. You've reached the Pretty Good AI test line. Goodbye.
+AI: Alright. Thanks for your help. Have a good day. Goodbye.

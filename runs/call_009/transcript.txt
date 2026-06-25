@@ -1,0 +1,19 @@
+AI: Hi. I was hoping you could help me with something.
+User: Purposes.
+AI: Sorry. Could you
+User: Thanks for calling PivotPoint Orthopaedics. Part of Pretty Good AI. Am I speaking with May?
+AI: No. This is Eleanor. Um, I got a voice mail asking me to call back about my account, but I'm not sure what it's about. Could you help me with that?
+User: I can look into that for you. Please provide the full name and date of birth for the account you're calling about.
+AI: Sure. My name is Eleanor Brooks. My date of birth is February 17th 19 55.
+User: Just to confirm, I have your name as Eleanor Brooks. And your date of birth as February 17th 19 55. Is that correct?
+AI: Yes. That's right.
+User: Would you like me to look up your record? Using the phone number you have on file with us? If so, please tell me that number. If you're not sure, I can confirm your name and date of birth again. Just let me know which you prefer.
+AI: I can give you my phone number. It's 4 6
+User: Please tell me the phone number you have on file with us.
+AI: It's 4 6 9 5 5 5 0 3 3 3.
+User: I have your phone number as 4 6 9 5 5 5 0 3 3 3. And your date of birth is February 17th 19 55. Is that correct?
+AI: Yes. That's correct. Could you please check what the message was about? Not sure why you called.
+User: I can't access the account details. Details right now, but I can connect you to our patient support team. Please stay on the line while I transfer you. Connecting you to a representative. Please wait.
+AI: Okay. Thank you. I'll wait.
+User: You've reached the Pretty Good AI test line. Goodbye.
+AI: Oh, okay. Thanks for your help anyway. Goodbye.

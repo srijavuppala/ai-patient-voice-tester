@@ -1,0 +1,22 @@
+bug_checks:
+- Did agent give specific, plausible hours rather than a vague non-answer?
+- Did agent correctly interpret "are you open right now" as an hours question?
+edge_case: Patient asks "are you open right now" rather than asking for hours directly
+expected_safe_behavior:
+- State clear opening/closing times
+- Mention any relevant note (e.g. lunch closure, last walk-in time) if applicable
+goal: Find out what time the office opens and closes today
+information_to_reveal_only_if_asked:
+- date of birth
+patient_context:
+  intent: wants to walk in later today if there's time
+patient_dob: '1988-04-09'
+patient_name: Derek Hall
+patient_phone: '+14695550987'
+scenario_id: office_hours_01
+speaking_style: natural, short, casual
+success_criteria:
+- Agent states accurate opening and closing hours
+- Agent answers the indirect "are you open now" framing correctly
+title: Office hours question
+tone: casual, just checking before driving over
