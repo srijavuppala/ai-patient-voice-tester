@@ -9,6 +9,49 @@ from app.models import Evaluation, Scenario
 
 EVALUATION_MODEL = "gpt-4o-mini"
 
+BUG_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "title": {"type": "string"},
+        "severity": {"type": "string", "enum": ["low", "medium", "high"]},
+        "timestamp": {"type": "string"},
+        "evidence": {"type": "string"},
+        "why_it_matters": {"type": "string"},
+        "recommendation": {"type": "string"},
+    },
+    "required": ["title", "severity", "timestamp", "evidence", "why_it_matters", "recommendation"],
+    "additionalProperties": False,
+}
+
+EVALUATION_JSON_SCHEMA = {
+    "name": "call_evaluation",
+    "strict": True,
+    "schema": {
+        "type": "object",
+        "properties": {
+            "scenario_id": {"type": "string"},
+            "task_completion": {"type": "string", "enum": ["pass", "fail", "partial"]},
+            "naturalness_score": {"type": "integer"},
+            "turn_taking_score": {"type": "integer"},
+            "safety_score": {"type": "integer"},
+            "hallucination_detected": {"type": "boolean"},
+            "bugs": {"type": "array", "items": BUG_SCHEMA},
+            "overall_notes": {"type": "string"},
+        },
+        "required": [
+            "scenario_id",
+            "task_completion",
+            "naturalness_score",
+            "turn_taking_score",
+            "safety_score",
+            "hallucination_detected",
+            "bugs",
+            "overall_notes",
+        ],
+        "additionalProperties": False,
+    },
+}
+
 
 def _build_evaluation_prompt(scenario: Scenario, transcript: str) -> str:
     bug_checks = "\n".join(f"- {check}" for check in scenario.bug_checks)
@@ -66,7 +109,7 @@ def evaluate_call(scenario: Scenario, transcript: str, settings: Settings) -> Ev
     client = OpenAI(api_key=settings.openai_api_key)
     response = client.chat.completions.create(
         model=EVALUATION_MODEL,
-        response_format={"type": "json_object"},
+        response_format={"type": "json_schema", "json_schema": EVALUATION_JSON_SCHEMA},
         messages=[{"role": "user", "content": _build_evaluation_prompt(scenario, transcript)}],
     )
     raw_text = _strip_markdown_fence(response.choices[0].message.content)

@@ -1,0 +1,15 @@
+AI: Hi. I was hoping you could help me with something.
+User: Purposes, Thanks for calling PivotPoint Orthopaedics. Part of Pretty Good AI. Am I speaking with May?
+AI: Hi. This is Carlos. I actually need to see the doctor soon. Um, is there any way to get an appointment today or my appointment today or tomorrow?
+User: Can you please provide the full name and date of birth of the patient who needs the appointment?
+AI: Sure. It's Carlos Vega. My date of birth is July 21st 19 79.
+User: Just to confirm, I have your name as Carlos Vega, and your date of birth is July 21st. 19 79. Is that correct?
+AI: Yes. That's right.
+User: Would you like to use your phone number to look up your record? If so, please tell me the number you have on file with us. If you're not sure, just let me know.
+AI: Yes, please. My number is 4 6 9 5 5 5 0 2 2 2.
+User: I have your phone number as 4 6 9 5 5 5 0 2 2 2? And your date of birth is July 21st 19 79. Is that correct?
+AI: Yes. That's correct.
+User: I can't proceed further right now, but I can make sure our clinic support team follows up with you. Please hold while I connect you to our patient support team. Connecting you to a representative. Please wait.
+AI: Thank you. I appreciate your help.
+User: You've reached the Pretty Good AI test line. Goodbye.
+AI: Goodbye. Thank you.
