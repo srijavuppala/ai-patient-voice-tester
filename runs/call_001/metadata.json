@@ -1,0 +1,8 @@
+{
+  "call_id": "019efcb8-ca38-7000-887f-d29203f2567b",
+  "scenario_id": "appointment_simple_01",
+  "status": "ended",
+  "started_at": "2026-06-25T03:00:36.137Z",
+  "ended_at": "2026-06-25T03:03:26.241Z",
+  "recording_url": "https://storage.vapi.ai/019efcb8-ca38-7000-887f-d29203f2567b-1782356608825-af4d9f60-67e1-40f1-bb24-b20537c0a666-mono.wav"
+}

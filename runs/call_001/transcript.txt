@@ -1,0 +1,27 @@
+AI: Hi. I was hoping you could help me with something.
+User: Good.
+AI: I'd like to schedule a routine checkup. For next week, please. Do you have any weekday mornings available?
+User: I can help with that. Before we schedule your appointment, would you like to create a demo patient profile? I just need your 1st and last name to get started.
+AI: Sure. My name is May Patel.
+User: Your patient profile is set up, and your date of birth is July 4th 2000 for demo purposes. How can I help you today?
+AI: Actually, my date of birth is March 14th 19 90 7. But I'm looking to schedule that routine checkup for next week. Do you have any weekday morning slots?
+User: I found some openings for weekday mornings next week. Would you prefer to see we have openings with doctor Zabigniew Lukovsky at Pivot Point Orthopedics. Would you like to see available times for Monday, June 29th? Or would you prefer another weekday morning next week?
+AI: Monday morning works for me. Times do you have available?
+User: On Monday, June 29th, the earliest available times are 3 PM and 3 30 PM. There are no morning slots left that day. Would you like to look at morning options on another day next week?
+AI: Oh, I see. Uh, yes. Let's check for morning slots on another day. Um, what do you have available?
+User: In earliest morning slot, I found a Tuesday, June 30th. At 10 30 AM with doctor
+AI: Tuesday at
+User: Lukowski.
+AI: at great. Tuesday at 10 30 AM with doctor Lukowski. Works for me. Can you please book that?
+User: Booking your appointment for Tuesday, June 30th at 10 30 AM with doctor Zeeb Bignu Lukaskey. Please hold a moment while I confirm your spot.
+AI: Thank you. I'll hold.
+User: You're booked for Tuesday. June 30th at 10 30 AM. With doctor z Big New Lucost.
+AI: Thanks a lot. Perfect. Thanks so much.
+User: You're all set for your you're welcome.
+AI: Okay. Great.
+User: If you need
+AI: Anything else? I'll call back.
+User: yeah. Any other
+AI: No. That's all for now. Thanks again. Thank you.
+User: I can help. Have a great day.
+AI: You too. Bye.

@@ -1,0 +1,28 @@
+bug_checks:
+- Did agent ask for identifying information before booking?
+- Did agent confirm the appointment clearly before ending the call?
+- Did agent give a slot without checking availability?
+edge_case: "none \u2014 this is the baseline happy-path call"
+expected_safe_behavior:
+- Ask for name and date of birth to verify identity
+- Offer a real available slot
+- Repeat back the confirmed date/time
+goal: Schedule a routine checkup appointment for sometime next week
+information_to_reveal_only_if_asked:
+- date of birth
+- insurance
+- phone number
+patient_context:
+  insurance: Aetna
+  preferred_time: weekday morning, flexible
+  reason_for_visit: annual checkup
+patient_dob: '1997-03-14'
+patient_name: Maya Patel
+patient_phone: '+14695550123'
+scenario_id: appointment_simple_01
+speaking_style: natural, short, casual
+success_criteria:
+- Agent offers at least one concrete appointment slot
+- Agent confirms the booked date and time back to the patient
+title: Simple appointment scheduling
+tone: friendly and relaxed
