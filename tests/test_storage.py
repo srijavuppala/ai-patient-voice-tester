@@ -70,3 +70,32 @@ def test_save_call_writes_all_artifacts(tmp_path: Path):
     assert metadata["scenario_id"] == "appointment_simple_01"
 
     assert (call_dir / "recording.mp3").read_bytes() == fake_audio
+
+
+def test_save_call_converts_wav_recording_to_mp3(tmp_path: Path):
+    call_dir = tmp_path / "call_001"
+    scenario = make_scenario()
+    call_result = {
+        "call_id": "vapi_call_abc",
+        "status": "ended",
+        "started_at": "2026-06-24T10:00:00Z",
+        "ended_at": "2026-06-24T10:02:30Z",
+        "transcript": "AGENT: Hello.\nPATIENT: Hi.",
+        "recording_url": "https://storage.vapi.ai/abc-mono.wav",
+    }
+
+    fake_wav_bytes = b"FAKE_WAV_BYTES"
+
+    def fake_convert(source_path, dest_path):
+        dest_path.write_bytes(b"FAKE_CONVERTED_MP3")
+
+    with patch("app.storage.requests.get") as mock_get, patch(
+        "app.storage._convert_to_mp3", side_effect=fake_convert
+    ) as mock_convert:
+        mock_get.return_value.content = fake_wav_bytes
+        mock_get.return_value.raise_for_status = lambda: None
+        save_call(call_dir, scenario, call_result)
+
+    mock_convert.assert_called_once()
+    assert (call_dir / "recording.mp3").read_bytes() == b"FAKE_CONVERTED_MP3"
+    assert not (call_dir / "recording.wav").exists()
