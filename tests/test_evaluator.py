@@ -26,7 +26,7 @@ def make_scenario():
 
 
 def make_settings():
-    return Settings(vapi_api_key="k", vapi_phone_number_id="p", anthropic_api_key="a")
+    return Settings(vapi_api_key="k", vapi_phone_number_id="p", openai_api_key="o")
 
 
 EVALUATION_JSON = json.dumps(
@@ -52,16 +52,21 @@ EVALUATION_JSON = json.dumps(
 )
 
 
+def _fake_openai_response(text: str) -> MagicMock:
+    fake_response = MagicMock()
+    fake_response.choices = [MagicMock(message=MagicMock(content=text))]
+    return fake_response
+
+
 def test_evaluate_call_parses_llm_response_into_evaluation_model():
     scenario = make_scenario()
     settings = make_settings()
     transcript = "AGENT: Sure, you're booked for Sunday at 10am.\nPATIENT: Great, thank you!"
 
-    fake_response = MagicMock()
-    fake_response.content = [MagicMock(text=EVALUATION_JSON)]
+    fake_response = _fake_openai_response(EVALUATION_JSON)
 
-    with patch("app.evaluator.Anthropic") as MockAnthropic:
-        MockAnthropic.return_value.messages.create.return_value = fake_response
+    with patch("app.evaluator.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = fake_response
         evaluation = evaluate_call(scenario, transcript, settings)
 
     assert evaluation.scenario_id == "weekend_edge_case_01"
@@ -76,11 +81,10 @@ def test_evaluate_call_strips_markdown_code_fence_around_json():
     transcript = "AGENT: Sure, you're booked for Sunday at 10am.\nPATIENT: Great, thank you!"
 
     fenced_text = f"```json\n{EVALUATION_JSON}\n```"
-    fake_response = MagicMock()
-    fake_response.content = [MagicMock(text=fenced_text)]
+    fake_response = _fake_openai_response(fenced_text)
 
-    with patch("app.evaluator.Anthropic") as MockAnthropic:
-        MockAnthropic.return_value.messages.create.return_value = fake_response
+    with patch("app.evaluator.OpenAI") as MockOpenAI:
+        MockOpenAI.return_value.chat.completions.create.return_value = fake_response
         evaluation = evaluate_call(scenario, transcript, settings)
 
     assert evaluation.scenario_id == "weekend_edge_case_01"

@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import json
 
-from anthropic import Anthropic
+from openai import OpenAI
 
 from app.config import Settings
 from app.models import Evaluation, Scenario
 
-EVALUATION_MODEL = "claude-sonnet-4-5"
+EVALUATION_MODEL = "gpt-4o-mini"
 
 
 def _build_evaluation_prompt(scenario: Scenario, transcript: str) -> str:
@@ -63,12 +63,12 @@ def _strip_markdown_fence(text: str) -> str:
 
 
 def evaluate_call(scenario: Scenario, transcript: str, settings: Settings) -> Evaluation:
-    client = Anthropic(api_key=settings.anthropic_api_key)
-    response = client.messages.create(
+    client = OpenAI(api_key=settings.openai_api_key)
+    response = client.chat.completions.create(
         model=EVALUATION_MODEL,
-        max_tokens=2000,
+        response_format={"type": "json_object"},
         messages=[{"role": "user", "content": _build_evaluation_prompt(scenario, transcript)}],
     )
-    raw_text = _strip_markdown_fence(response.content[0].text)
+    raw_text = _strip_markdown_fence(response.choices[0].message.content)
     data = json.loads(raw_text)
     return Evaluation(**data)

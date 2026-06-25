@@ -12,7 +12,7 @@ ensures the tool can never place a call to any number other than the assigned te
 line, regardless of what's in configuration.
 
 After each call, a second and independent LLM pass (`app/evaluator.py`, using
-Claude) reads the saved transcript against that scenario's specific `bug_checks` and
+OpenAI's `gpt-4o-mini`) reads the saved transcript against that scenario's specific `bug_checks` and
 the general rubric (task completion, naturalness, turn-taking, hallucination, safety,
 medical-advice issues, scheduling/insurance/hours correctness) and emits structured
 JSON findings. `app/report_generator.py` then scans every call's `evaluation.json`

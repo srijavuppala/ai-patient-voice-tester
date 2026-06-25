@@ -14,14 +14,15 @@ independent of any configuration value.
 
 1. Create a [Vapi](https://vapi.ai) account and buy/import one outbound phone number.
    Note its **Phone Number ID**.
-2. Get a Vapi API key from your Vapi dashboard.
-3. Get an Anthropic API key from console.anthropic.com (used for the evaluator pass).
+2. Get a Vapi **Private Key** from your Vapi dashboard (API Keys page — not the
+   Public Key; the private key is required for server-side call placement).
+3. Get an OpenAI API key from platform.openai.com (used for the evaluator pass).
 4. Copy `.env.example` to `.env` and fill in:
 
    ```
-   VAPI_API_KEY=your-vapi-key
+   VAPI_API_KEY=your-vapi-private-key
    VAPI_PHONE_NUMBER_ID=your-vapi-phone-number-id
-   ANTHROPIC_API_KEY=your-anthropic-key
+   OPENAI_API_KEY=your-openai-key
    ```
 
    The call target (`+18054398008`) is hard-coded in `app/caller.py` and is not
@@ -83,4 +84,4 @@ pytest
 
 Tests cover scenario loading/validation, prompt building, storage, the Vapi caller's
 safety check and polling logic (all HTTP calls mocked), and the evaluator/report
-generator. They do not place real calls.
+generator. They do not place real calls or call OpenAI/Vapi.

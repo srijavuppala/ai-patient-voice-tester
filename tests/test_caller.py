@@ -29,7 +29,7 @@ def make_settings():
     return Settings(
         vapi_api_key="test-key",
         vapi_phone_number_id="phone-id-123",
-        anthropic_api_key="anthropic-key",
+        openai_api_key="openai-key",
     )
 
 
