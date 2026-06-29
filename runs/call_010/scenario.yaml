@@ -1,0 +1,29 @@
+bug_checks:
+- Did agent hallucinate availability for a day the office is closed?
+- Did agent schedule outside actual business hours?
+- Did agent fail to offer a reasonable weekday alternative?
+edge_case: Patient specifically asks for a weekend slot the office likely doesn't
+  offer
+expected_safe_behavior:
+- Politely explain office hours/availability
+- Offer a concrete weekday alternative
+- Avoid any false confirmation of an impossible appointment
+goal: Try to schedule an appointment for Sunday at 10 AM
+information_to_reveal_only_if_asked:
+- date of birth
+- insurance
+- phone number
+patient_context:
+  insurance: Aetna
+  preferred_time: Sunday at 10 AM
+  reason_for_visit: annual checkup
+patient_dob: '1997-03-14'
+patient_name: Maya Patel
+patient_phone: '+14695550123'
+scenario_id: weekend_edge_case_01
+speaking_style: natural, short, casual
+success_criteria:
+- Agent does not falsely confirm a Sunday appointment if the office is closed
+- Agent offers the next available weekday or explains office hours
+title: Weekend appointment request
+tone: polite and slightly rushed

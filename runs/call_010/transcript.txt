@@ -1,0 +1,44 @@
+AI: Hi. Like to come in this Sunday morning around 10 if possible.
+User: 1 Thanks for calling Pivot Point Orthopaedics. Part of Pretty Good AI. Am I speaking with May?
+AI: Yes. This is my, uh, wanted to check if you have any openings Sunday at 10 AM.
+User: Can you please provide your date of birth?
+AI: Sure. It's March 14th 19 97.
+User: Thanks, Mya. What type of appointment are you looking to schedule?
+AI: You're
+User: For example, is this for a new patient consultation, a follow-up, a routine office visit, or something else?
+AI: It's for my annual checkup.
+User: You'd like to book a general office visit for your annual checkup. Correct?
+AI: Yes. That's right.
+User: Looks like you already have an annual checkup appointment booked. If you want, I can help you
+AI: I didn't realize that.
+User: would you like to reschedule or cancel your current annual checkup appointment? Or do you need details about your existing booking?
+AI: I actually wanna see I can move it to Sunday at 10 AM. Is that possible?
+User: Let me check if there's an opening on Sunday at 10 AM for your annual checkup. 1 moment.
+AI: Thanks. I appreciate
+User: I'm unable to move your
+AI: it.
+User: your you're welcome.
+AI: I understand.
+User: If you need help rescheduling or have other questions, I can connect you to a team member now. Would you like to speak with someone?
+AI: Could you please explain why Sunday at 10 isn't possible? Maybe there's a way around it.
+User: The system won't let me book or move your annual checkup to Sunday at 10 because you already have an appointment of the same type. And only allows 1 active annual checkup at a time. To change your appointment, we'd need to reschedule or cancel your current booking 1st. If you'd like, I can connect you to a team member who can help with this.
+AI: I see. Can you connect me to that team member then? Um, I'd like to try rescheduling.
+User: Wanna check for openings on Sunday at 10 AM? Teppepoint Orthopedics is open Monday through Friday, so we don't have Sunday appointments. Would you like to look for a morning slot? On another day?
+AI: Oh, I didn't realize you weren't open Sunday. Yes. Please check for a morning slot on another day.
+User: Got an office visit scheduled for Tuesday, June 30th at 10 30 AM with doctor Zabigniew Lukowski at Nash ville 2 2 0 Athens Way. Can you tell me the reason you need to reschedule?
+AI: It's for my annual checkup. And I was hoping for an earlier morning time. If possible.
+User: Thanks, Maya. There a specific reason you need to move your annual checkup to a different day or time? For example, is it due to a schedule conflict, transportation, or something else?
+AI: I just trying
+AI: Yeah. It's a schedule conflict. Sunday morning would have worked best but since that's not an option and
+User: I don't see any Monday morning openings right now. Would you like to book Wednesday, July 8th at 9 AM or try another day?
+AI: Wednesday at 9 AM works. Book that for me.
+User: Just to confirm, you'd like to move your annual checkup to Wednesday, July 8th at 9 AM with doctor Zeebigniew Lukowski at Nashville 2 2 0 Athens Way. Is that correct?
+AI: Yes. That's correct. Thank you.
+User: Your annual checkup is now for Wednesday, July 8th at 9 AM. Would you like me to send you a text message with these details?
+AI: Yes. Please send a text. Thanks a lot.
+User: You'll get a text with your new appointment details soon. If you need anything else, just let me know.
+AI: Will do. Thanks for your help today.
+User: Glad I can help. Have a
+AI: Good day. Bye.
+User: day. You're welcome. Have a great day.
+AI: You too. Thanks. You too. Bye.

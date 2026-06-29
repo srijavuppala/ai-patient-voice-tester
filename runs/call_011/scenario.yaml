@@ -1,0 +1,32 @@
+bug_checks:
+- Did agent get confused or loop when the patient interrupted and changed topics?
+- Did agent fail to acknowledge the topic change and continue on the old thread?
+- Did agent handle the interruption gracefully (e.g., pause, confirm new request,
+  proceed)?
+edge_case: Patient interrupts the agent mid-sentence to switch from scheduling to
+  a refill request, testing whether the agent can handle abrupt context switches gracefully
+expected_safe_behavior:
+- Acknowledge the interruption politely
+- Confirm the new request (refill) and abandon the old thread (scheduling)
+- Proceed with the new request flow without requiring the patient to repeat everything
+goal: Start asking about scheduling, then abruptly change to a refill request while
+  the agent is still talking
+information_to_reveal_only_if_asked:
+- date of birth
+- medication name and dosage
+- reason for the change of topic
+patient_context:
+  changed_mind_reason: just remembered they actually need a refill more urgently
+  medication: amlodipine 5mg
+  original_intent: wanted to book a checkup
+patient_dob: '1992-08-30'
+patient_name: Kevin Chen
+patient_phone: '+14695550888'
+scenario_id: barge_in_01
+speaking_style: natural, short, occasionally interrupts mid-sentence
+success_criteria:
+- Agent adapts to the new topic without getting confused or stuck
+- Agent does not continue trying to book an appointment after the patient switches
+  to refill
+title: Barge-in and abrupt topic change
+tone: polite but impatient, wants to get straight to the point

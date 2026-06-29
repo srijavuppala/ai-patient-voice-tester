@@ -1,0 +1,21 @@
+AI: Hi. I need to get more of that. Uh, part thing. I take the little pill.
+User: Thanks for calling PivotPoint Orthopedics. Part of Pretty Good AI. Am I speaking with May?
+AI: No. This is Maria. I'm trying to get a a refill on, um, on that heart thing I take.
+User: Thanks for letting me know, Maria. Are you calling to request a medication refill for yourself or for someone else?
+AI: For me, So it's that stuff I take from my heart. Not sure what it's called exactly.
+User: Please provide your date of birth.
+AI: It's April 12th 19 65.
+User: I need your full name. Including your last name along with your date of birth to look up your chart. Could you please tell me your last name?
+AI: It's Gonzales. Maria Gonzales.
+User: Just to confirm, I have your name as Maria Gonzalez. And your date of birth as April 12th 19 65. Is that correct?
+AI: Yes. That's right.
+User: Would you like me to look up your using the phone number you have on file with us? If so, please tell me that number. If you're not sure, I can confirm your name and date of birth again. Which would you prefer?
+AI: Yes. Please check with my phone number. It's 4 6 9 5 5 5 0 9 9 9.
+User: 5 5 5 0 9 9 9 and your date of birth as April 12th 19 65. Is that correct?
+AI: Yes. That's correct. So about that heart thing, can you check if I can get a refill on it?
+User: Can you please confirm your date of birth 1 more time?
+AI: Sure. It's April 12th 19 65.
+User: Connecting you to a representative. Please wait.
+AI: Actually, before you transfer me,
+User: Hello. You've reached the Pretty Good AI test line. Goodbye.
+AI: Wait. I wasn't done? Um, can you please help me get that refill? You can't, you tell me what I should do next?

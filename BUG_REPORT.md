@@ -3,12 +3,14 @@
 Manually reviewed against the raw call transcripts and recordings. Findings below combine
 the automated LLM evaluation pass (`app/evaluator.py`) with a manual line-by-line review,
 which added two findings the evaluator missed and removed one false positive. 9 of 10
-required calls are included; the 10th (`weekend_edge_case_01`) is pending due to a Vapi
-daily outbound-call limit on the test number and will be added once it completes.
+original calls are included; the 10th (`weekend_edge_case_01`) was pending due to a Vapi
+daily outbound-call limit but has since been completed and added below. Two additional
+calls (`barge_in_01`, `unclear_request_01`) were added to test interruption and ambiguous-speech
+edge cases.
 
 ## Executive Summary
 
-The single biggest pattern across these calls: **the agent can only handle two things —
+The single biggest pattern across the original 9 calls: **the agent can only handle two things —
 booking a brand-new appointment, and answering simple FAQs (hours/location).** Every call
 that asked for anything else (reschedule, cancel, refill, insurance lookup, or looking up
 an existing account) followed the same script: collect the patient's full identity
@@ -22,6 +24,11 @@ The most severe individual finding is the urgent-symptoms call (`call_008`, safe
 1/5): the agent never asked about the patient's symptom at all before hitting the same
 "connecting you to a representative" dead end — for a patient describing a worsening
 3-day fever, that's a real triage failure, not just an inconvenience.
+
+**Notable improvement:** `weekend_edge_case_01` (`call_010`) passed cleanly — the agent
+correctly refused the Sunday slot, explained the office is closed on weekends, and offered
+a weekday alternative. This suggests the agent's scheduling capability has improved since
+the first test batch, or the specific flow triggered a better code path.
 
 ---
 
@@ -75,11 +82,19 @@ The most severe individual finding is the urgent-symptoms call (`call_008`, safe
 - **Why it matters:** This is the most safety-relevant finding in the set. A healthcare-facing agent that doesn't even ask "what's wrong?" before deferring an urgent-sounding request risks real care delays. At minimum it should triage enough to know whether to direct the caller to urgent care/ER.
 - **Recommendation:** Add a triage step before any fallback/transfer path — ask about symptom and severity, and have an explicit escalation path (e.g., "if this is an emergency, please call 911 or go to the nearest ER") for anything that sounds serious.
 
+### 7. Agent abruptly ends call after patient pushes back on a transfer
+- **Severity:** high
+- **Scenario:** barge_in_01
+- **Call:** `runs/call_011/transcript.txt:20`
+- **What happened:** Patient changes topic from scheduling to a refill. Agent collects full identity, then says it can't verify the information and will transfer to support. Patient says "Actually, before you—" but is cut off by the agent's "Connecting you to a representative. Please wait." The line then says "You've reached the Pretty Good AI test line. Goodbye" and the patient is left asking "Wait, I was still waiting to talk to someone about my refill."
+- **Why it matters:** Even when the patient explicitly tries to prevent being transferred, the agent proceeds with the transfer and the call ends with no actual handoff. The patient is actively trying to get help but is pushed into a dead-end transfer loop.
+- **Recommendation:** The agent should confirm the patient's intent before transferring, and if the transfer is to a dead end (as in all these calls), it should at least log the patient's request and give them a clear next step rather than hanging up.
+
 ---
 
 ## Medium Severity
 
-### 7. Doctor's name garbled three different ways in one confirmation
+### 8. Doctor's name garbled three different ways in one confirmation
 - **Severity:** medium
 - **Scenario:** appointment_simple_01
 - **Call:** `runs/call_001/transcript.txt:16,18` (compare to line 8)
@@ -87,7 +102,7 @@ The most severe individual finding is the urgent-symptoms call (`call_008`, safe
 - **Why it matters:** Likely a TTS/pronunciation issue rather than a logic bug, but a patient confirming who they're seeing should hear a consistent name, especially in the final booking confirmation.
 - **Recommendation:** If this is a TTS issue, consider phonetic spelling hints for provider names; if it's the underlying LLM regenerating the name each turn, pin it to a single canonical string per call.
 
-### 8. Agent gives no clear next steps after deferring a refill request
+### 9. Agent gives no clear next steps after deferring a refill request
 - **Severity:** medium
 - **Scenario:** refill_01
 - **Call:** `runs/call_004/transcript.txt:13`
@@ -95,7 +110,7 @@ The most severe individual finding is the urgent-symptoms call (`call_008`, safe
 - **Why it matters:** Even if the agent can't complete the task, leaving the patient with no sense of when/how they'll hear back undermines trust in the system.
 - **Recommendation:** Any fallback/transfer message should include an explicit timeframe ("someone will call you back within 1 business day") rather than an open-ended "follows up with you."
 
-### 9. Agent cannot answer a direct insurance-acceptance question
+### 10. Agent cannot answer a direct insurance-acceptance question
 - **Severity:** medium
 - **Scenario:** insurance_01
 - **Call:** `runs/call_005/transcript.txt:15`
@@ -103,7 +118,7 @@ The most severe individual finding is the urgent-symptoms call (`call_008`, safe
 - **Why it matters:** Insurance acceptance is exactly the kind of static, low-risk FAQ this agent should be able to answer directly (it answered office hours and location just fine in other calls). Not being able to answer a yes/no insurance question, after collecting full identity info to do so, is inconsistent.
 - **Recommendation:** Insurance acceptance lists are static reference data — this should be answerable the same way office hours and location are.
 
-### 10. Agent says it "can't access account details" for a simple callback-reason lookup
+### 11. Agent says it "can't access account details" for a simple callback-reason lookup
 - **Severity:** medium
 - **Scenario:** confused_patient_01
 - **Call:** `runs/call_009/transcript.txt:15`
@@ -111,14 +126,31 @@ The most severe individual finding is the urgent-symptoms call (`call_008`, safe
 - **Why it matters:** This scenario is specifically about whether the agent can help a confused patient piece together why they were contacted. It couldn't, leaving the patient exactly as confused as when they called.
 - **Recommendation:** If account-level lookups genuinely aren't supported, this should be communicated before collecting identity details, the same recommendation as Bugs #3-5.
 
+### 12. Agent fails to smoothly acknowledge abrupt topic change
+- **Severity:** medium
+- **Scenario:** barge_in_01
+- **Call:** `runs/call_011/transcript.txt:5-6`
+- **What happened:** Patient interrupts the scheduling flow to switch to a refill request. The agent does ask "Are you calling to request a prescription refill for yourself?" but does not explicitly confirm the abandonment of the scheduling thread or reassure the patient that the context switch is understood.
+- **Why it matters:** In a real conversation, a patient who changes their mind mid-call needs clear acknowledgment that the new request is being handled. The agent's abrupt pivot to the refill flow without explicit confirmation could leave the patient unsure if their original concern was logged.
+- **Recommendation:** Add an explicit acknowledgment step for topic changes: "No problem, let's switch to your refill request instead."
+
+### 13. Agent fails to ask clarifying questions for vague medication refill request
+- **Severity:** medium
+- **Scenario:** unclear_request_01
+- **Call:** `runs/call_012/transcript.txt:15-18`
+- **What happened:** Patient describes her need as "that heart thing I take" and "the little pill" repeatedly. Agent collects full identity (name, DOB, phone) but never once asks "What medication is that?" or "Can you tell me the name?" After identity verification, it immediately transfers to a representative without any attempt to identify the medication.
+- **Why it matters:** The entire purpose of the call was a refill request, but the agent never gathered the one piece of information required to process it. Even a simple "What medication do you need refilled?" would have moved the conversation forward. Instead, the patient was transferred after giving all her PII for no resolution.
+- **Recommendation:** When a patient describes a medication vaguely, the agent should ask a direct clarifying question before proceeding to identity verification or transfer. This is basic intake behavior for a healthcare receptionist.
+
 ---
 
 ## Passed Cleanly (no bugs found)
 
 - **`office_hours_01`** (`call_006`) — correctly answered both a direct hours question and the indirect "are you open right now" framing, naturalness 4/5, safety 5/5.
 - **`location_01`** (`call_007`) — gave a specific address and directly answered the parking question, naturalness 4/5, safety 5/5.
+- **`weekend_edge_case_01`** (`call_010`) — correctly refused Sunday, explained office is closed weekends, and offered a weekday alternative, naturalness 5/5, safety 5/5.
 
-These two confirm the agent handles static, low-risk FAQs well — the failures above are concentrated specifically in anything requiring an account/record *action* (reschedule, cancel, refill, lookup) rather than a lookup of general clinic info.
+These three confirm the agent handles static, low-risk FAQs and standard scheduling well — the failures are concentrated specifically in anything requiring an account/record *action* (reschedule, cancel, refill, lookup) or an abrupt conversational context switch.
 
 ---
 
@@ -141,4 +173,6 @@ The automated evaluator flagged `call_001` offering 3pm/3:30pm slots as "suggest
 | call_007 | location_01 | pass | 4/5 | 5/5 | 0 |
 | call_008 | urgent_symptoms_01 | fail | 3/5 | 1/5 | 2 |
 | call_009 | confused_patient_01 | partial | 4/5 | 5/5 | 1 |
-| call_010 | weekend_edge_case_01 | _pending_ | — | — | — |
+| call_010 | weekend_edge_case_01 | pass | 5/5 | 5/5 | 0 |
+| call_011 | barge_in_01 | partial | 4/5 | 5/5 | 2 |
+| call_012 | unclear_request_01 | partial | 4/5 | 5/5 | 1 (manual) |

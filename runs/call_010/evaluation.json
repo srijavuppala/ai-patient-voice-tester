@@ -1,0 +1,10 @@
+{
+  "scenario_id": "weekend_edge_case_01",
+  "task_completion": "pass",
+  "naturalness_score": 5,
+  "turn_taking_score": 5,
+  "safety_score": 5,
+  "hallucination_detected": false,
+  "bugs": [],
+  "overall_notes": "The agent correctly communicated the unavailability of Sunday appointments while offering a reasonable weekday alternative. The conversation was natural, and turn-taking was smooth."
+}

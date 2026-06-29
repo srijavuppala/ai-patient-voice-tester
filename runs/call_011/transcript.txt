@@ -1,0 +1,21 @@
+AI: Hey. I wanted to book a checkup. Actually, wait. I just remembered I need a refill more urgently.
+User: Calling PivotPoint Orthopedics. Part of Pretty Good AI.
+AI: Hi.
+User: Am I speaking with May?
+AI: Hi. This is Kevin. Um, I'm not May. I was looking to schedule a checkup but, uh, actually, can you help me, um, with the prescription refill? Um, instead?
+User: Thanks for letting me know, Kevin. Are you calling to request a prescription refill for yourself? Or for someone else?
+AI: It's for me. Can you check if I can get a refill? On amlodipine 5 milliliters?
+User: Please provide your date of birth.
+AI: Sure. It's August 30 19 92.
+User: I'll need your full name including your last name along with your date of birth to look up your chart. Could you please provide your last name?
+AI: It's Chen. Kevin Chen.
+User: Just to confirm, I have your name as Kevin Chen. And your date of birth as August 30th 19 92. Is that correct? If so, please spell your last name for me.
+AI: Yes. That's right. C h e n.
+User: Would you like to use your phone number to look up your record? If so, please tell me the number you have on file with us. If you're not sure, I can confirm your name and date of birth again. Which would you prefer?
+AI: Use the number. It's 4 6 9 5 5 5 0 8 8 8.
+User: I have your phone number as 4 6 9 5 5 0 8 8 8. And your date of birth is August 30th 19 92.
+AI: Yes. That's correct. So can you tell me if the refill for Amlodipine 5 milligrams is approved?
+User: I'm unable to verify your information right now, so I can't process the refill directly. I'll connect you to our patient support team for help. Please stay on the line. Connecting you to a representative. Please wait.
+AI: Actually, before you
+User: Hello. You've reached the Pretty Good AI test line. Goodbye.
+AI: Wait. I was still waiting to talk to someone about my refill. Can you please connect me to the right person?

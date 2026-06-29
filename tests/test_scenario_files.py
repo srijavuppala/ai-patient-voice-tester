@@ -5,11 +5,11 @@ from app.scenarios import load_scenarios
 SCENARIOS_DIR = Path(__file__).parent.parent / "scenarios"
 
 
-def test_all_ten_scenario_files_load_successfully():
+def test_all_scenario_files_load_successfully():
     scenarios = load_scenarios(SCENARIOS_DIR)
-    assert len(scenarios) == 10
+    assert len(scenarios) == 12
     ids = {s.scenario_id for s in scenarios}
-    assert len(ids) == 10, "scenario_id values must be unique"
+    assert len(ids) == 12, "scenario_id values must be unique"
 
 
 def test_weekend_edge_case_flags_closed_office_in_bug_checks():
