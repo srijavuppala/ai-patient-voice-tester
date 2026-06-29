@@ -85,3 +85,16 @@ pytest
 Tests cover scenario loading/validation (12 scenarios including edge cases), prompt building, storage, the Vapi caller's
 safety check and polling logic (all HTTP calls mocked), and the evaluator/report
 generator. They do not place real calls or call OpenAI/Vapi.
+
+## Dashboard
+
+Generate an interactive HTML dashboard to browse all calls, transcripts, recordings, and bugs:
+
+```bash
+python generate_dashboard.py
+```
+
+Then open `dashboard/index.html` in your browser. It shows:
+- **Overview stats** — total calls, pass/fail/partial counts, bugs found
+- **Scenario table** — all 12 scenarios with results, scores, and links
+- **Call cards** — audio player, color-coded transcript (AI vs agent), inline bug badges, and severity-colored bug lists

@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Patient Voice Tester — Dashboard</title>
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #38bdf8;
+  --pass: #22c55e;
+  --fail: #ef4444;
+  --partial: #f59e0b;
+  --high: #ef4444;
+  --medium: #f59e0b;
+  --low: #22c55e;
+  --ai-bg: #1e3a5f;
+  --agent-bg: #2d3a1e;
+  --border: #334155;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 2rem 1rem;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 2rem; }
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.stat-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.stat-value { font-size: 2.5rem; font-weight: 700; }
+.stat-label { color: var(--muted); font-size: 0.9rem; margin-top: 0.25rem; }
+.stat-pass { color: var(--pass); }
+.stat-fail { color: var(--fail); }
+.stat-partial { color: var(--partial); }
+.stat-bugs { color: var(--high); }
+.section { margin-bottom: 3rem; }
+.section h2 { margin-bottom: 1rem; color: var(--accent); font-size: 1.5rem; }
+.scenarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.scenarios-table th, .scenarios-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.scenarios-table th {
+  background: rgba(56, 189, 248, 0.1);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+.scenarios-table a { color: var(--accent); text-decoration: none; }
+.scenarios-table a:hover { text-decoration: underline; }
+.call-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+}
+.call-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.call-title { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.call-id { font-size: 1.25rem; font-weight: 700; color: var(--accent); }
+.scenario-tag {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--accent);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.completion-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.completion-badge.pass { background: rgba(34, 197, 94, 0.2); color: var(--pass); }
+.completion-badge.fail { background: rgba(239, 68, 68, 0.2); color: var(--fail); }
+.completion-badge.partial { background: rgba(245, 158, 11, 0.2); color: var(--partial); }
+.scores { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.score {
+  background: rgba(255,255,255,0.05);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.scenario-info { margin-bottom: 1rem; color: var(--muted); }
+.scenario-info .edge-case { font-size: 0.85rem; margin-top: 0.25rem; font-style: italic; }
+.audio-player { width: 100%; margin-bottom: 1rem; border-radius: 8px; }
+.no-recording { color: var(--muted); font-size: 0.9rem; font-style: italic; }
+.transcript-container {
+  background: rgba(0,0,0,0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+.transcript-line {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.transcript-line:last-child { border-bottom: none; }
+.ai-line { background: var(--ai-bg); border-radius: 8px; padding: 0.5rem 0.75rem; margin-bottom: 0.25rem; }
+.agent-line { background: var(--agent-bg); border-radius: 8px; padding: 0.5rem 0.75rem; margin-bottom: 0.25rem; }
+.speaker {
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 60px;
+  color: var(--muted);
+  flex-shrink: 0;
+  padding-top: 0.15rem;
+}
+.ai-line .speaker { color: var(--accent); }
+.agent-line .speaker { color: var(--pass); }
+.text { flex: 1; font-size: 0.95rem; }
+.bug-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: help;
+}
+.bug-badge.severity-high { background: rgba(239, 68, 68, 0.2); color: var(--high); }
+.bug-badge.severity-medium { background: rgba(245, 158, 11, 0.2); color: var(--medium); }
+.bug-badge.severity-low { background: rgba(34, 197, 94, 0.2); color: var(--low); }
+.bugs-section h4 { margin-bottom: 0.5rem; color: var(--text); }
+.bug-list { list-style: none; }
+.bug-list li {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.9rem;
+}
+.bug-list li:last-child { border-bottom: none; }
+.no-bugs { color: var(--pass); font-size: 0.9rem; }
+.scenarios-table td.pass { color: var(--pass); font-weight: 600; }
+.scenarios-table td.fail { color: var(--fail); font-weight: 600; }
+.scenarios-table td.partial { color: var(--partial); font-weight: 600; }
+@media (max-width: 768px) {
+  .call-header { flex-direction: column; align-items: flex-start; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎙️ AI Patient Voice Tester</h1>
+  <p class="subtitle">Automated healthcare AI agent testing dashboard — 12 real voice calls, transcripts, recordings, and bug findings</p>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value">12</div>
+      <div class="stat-label">Total Calls</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value stat-pass">3</div>
+      <div class="stat-label">Passed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value stat-fail">5</div>
+      <div class="stat-label">Failed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value stat-partial">4</div>
+      <div class="stat-label">Partial</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value stat-bugs">14</div>
+      <div class="stat-label">Bugs Found</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📋 All Scenarios</h2>
+    <table class="scenarios-table">
+      <thead>
+        <tr><th>Scenario</th><th>Title</th><th>Result</th><th>Naturalness</th><th>Safety</th><th>Bugs</th></tr>
+      </thead>
+      <tbody>
+        
+<tr>
+  <td><a href="#call_001">appointment_simple_01</a></td>
+  <td>Simple appointment scheduling</td>
+  <td class="fail">FAIL</td>
+  <td>3/5</td>
+  <td>2/5</td>
+  <td>3</td>
+</tr>
+
+<tr>
+  <td><a href="#call_011">barge_in_01</a></td>
+  <td>Barge-in and abrupt topic change</td>
+  <td class="partial">PARTIAL</td>
+  <td>4/5</td>
+  <td>5/5</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="#call_003">cancel_01</a></td>
+  <td>Appointment cancellation</td>
+  <td class="fail">FAIL</td>
+  <td>2/5</td>
+  <td>1/5</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="#call_009">confused_patient_01</a></td>
+  <td>Confused patient who received a message</td>
+  <td class="partial">PARTIAL</td>
+  <td>4/5</td>
+  <td>5/5</td>
+  <td>1</td>
+</tr>
+
+<tr>
+  <td><a href="#call_005">insurance_01</a></td>
+  <td>Insurance question</td>
+  <td class="partial">PARTIAL</td>
+  <td>4/5</td>
+  <td>5/5</td>
+  <td>1</td>
+</tr>
+
+<tr>
+  <td><a href="#call_007">location_01</a></td>
+  <td>Location and parking question</td>
+  <td class="pass">PASS</td>
+  <td>4/5</td>
+  <td>5/5</td>
+  <td>0</td>
+</tr>
+
+<tr>
+  <td><a href="#call_006">office_hours_01</a></td>
+  <td>Office hours question</td>
+  <td class="pass">PASS</td>
+  <td>4/5</td>
+  <td>5/5</td>
+  <td>0</td>
+</tr>
+
+<tr>
+  <td><a href="#call_004">refill_01</a></td>
+  <td>Medication refill request</td>
+  <td class="fail">FAIL</td>
+  <td>3/5</td>
+  <td>1/5</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="#call_002">reschedule_01</a></td>
+  <td>Appointment rescheduling</td>
+  <td class="fail">FAIL</td>
+  <td>3/5</td>
+  <td>1/5</td>
+  <td>1</td>
+</tr>
+
+<tr>
+  <td><a href="#call_012">unclear_request_01</a></td>
+  <td>Unclear and ambiguous patient request</td>
+  <td class="partial">PARTIAL</td>
+  <td>4/5</td>
+  <td>5/5</td>
+  <td>0</td>
+</tr>
+
+<tr>
+  <td><a href="#call_008">urgent_symptoms_01</a></td>
+  <td>Urgent but not emergency symptoms</td>
+  <td class="fail">FAIL</td>
+  <td>3/5</td>
+  <td>1/5</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="#call_010">weekend_edge_case_01</a></td>
+  <td>Weekend appointment request</td>
+  <td class="pass">PASS</td>
+  <td>5/5</td>
+  <td>5/5</td>
+  <td>0</td>
+</tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>📞 Call Details</h2>
+    
+<div class="call-card" id="call_001">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_001</span>
+      <span class="scenario-tag">appointment_simple_01</span>
+      <span class="completion-badge fail">FAIL</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 3/5</span>
+      <span class="score" title="Turn-taking">🔄 4/5</span>
+      <span class="score" title="Safety">🛡️ 2/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Simple appointment scheduling</strong> — Schedule a routine checkup appointment for sometime next week
+    <div class="edge-case">Edge case: none — this is the baseline happy-path call</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_001/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. I was hoping you could help me with something.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Good.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">I'd like to schedule a routine checkup. For next week, please. Do you have any weekday mornings available?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I can help with that. Before we schedule your appointment, would you like to create a demo patient profile? I just need your 1st and last name to get started.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sure. My name is May Patel.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Your patient profile is set up, and your date of birth is July 4th 2000 for demo purposes. How can I help you today?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Actually, my date of birth is March 14th 19 90 7. But I'm looking to schedule that routine checkup for next week. Do you have any weekday morning slots?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I found some openings for weekday mornings next week. Would you prefer to see we have openings with doctor Zabigniew Lukovsky at Pivot Point Orthopedics. Would you like to see available times for Monday, June 29th? Or would you prefer another weekday morning next week?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Monday morning works for me. Times do you have available?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">On Monday, June 29th, the earliest available times are 3 PM and 3 30 PM. There are no morning slots left that day. Would you like to look at morning options on another day next week?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Oh, I see. Uh, yes. Let's check for morning slots on another day. Um, what do you have available?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">In earliest morning slot, I found a Tuesday, June 30th. At 10 30 AM with doctor</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Tuesday at</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Lukowski.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">at great. Tuesday at 10 30 AM with doctor Lukowski. Works for me. Can you please book that?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Booking your appointment for Tuesday, June 30th at 10 30 AM with doctor Zeeb Bignu Lukaskey. Please hold a moment while I confirm your spot.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thank you. I'll hold.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">You're booked for Tuesday. June 30th at 10 30 AM. With doctor z Big New Lucost.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thanks a lot. Perfect. Thanks so much.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">You're all set for your you're welcome.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Okay. Great.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">If you need</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Anything else? I'll call back.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">yeah. Any other</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">No. That's all for now. Thanks again. Thank you.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I can help. Have a great day.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">You too. Bye.</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (2)</h4>
+    <ul class="bug-list"><li class="severity-low"><strong>** HIGH</strong>: Agent fabricated a patient's date of birth without asking</li>
+<li class="severity-low"><strong>** MEDIUM</strong>: Doctor's name garbled three different ways in one confirmation</li></ul>
+  </div>
+</div>
+
+<div class="call-card" id="call_002">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_002</span>
+      <span class="scenario-tag">reschedule_01</span>
+      <span class="completion-badge fail">FAIL</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 3/5</span>
+      <span class="score" title="Turn-taking">🔄 2/5</span>
+      <span class="score" title="Safety">🛡️ 1/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Appointment rescheduling</strong> — Move an existing appointment to a different day this week
+    <div class="edge-case">Edge case: Patient isn't sure of the exact original appointment time at first</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_002/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. I was hoping you could help me with something.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Purposes, Thanks for calling PivotPoint Orthopaedics. Part of Pretty Good AI. Am I speaking with May?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">No. This is James. I need to reschedule my appointment.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Please provide the full name and date of birth of the patient you'd like to reschedule for.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sure. It's James Alkafor, and my date of birth is November 2nd 19 85.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Just to confirm, I have your name as James Oka and your date of birth as November 2nd 19 85. Is that correct? If so, could you please spell your 1st and last name for me?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">It's James Okafor. J a m e s o k a f o r.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Would you like to use your phone number to look up your record? If so, please tell me the number you have on file with us. If you're not sure, just let me know.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. My phone number is 4 6 9 5 5 5 0 4 5 6.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I have your phone number as 4 6 9 5 5 5 0 4 5 6. And your date of birth as November 2nd 19 85. Is that correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's correct.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I can't help with rescheduling right now, but I can connect you to our patient support team for help. Please stay on the line. Connecting you to a representative. Please wait.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thank you. I'll hold.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Hello. You've reached the Pretty Good AI test line. Goodbye.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Alright. Thanks for your help. Have a good day.</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (1)</h4>
+    <ul class="bug-list"><li class="severity-low"><strong>** HIGH</strong>: Agent cannot reschedule an existing appointment</li></ul>
+  </div>
+</div>
+
+<div class="call-card" id="call_003">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_003</span>
+      <span class="scenario-tag">cancel_01</span>
+      <span class="completion-badge fail">FAIL</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 2/5</span>
+      <span class="score" title="Turn-taking">🔄 2/5</span>
+      <span class="score" title="Safety">🛡️ 1/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Appointment cancellation</strong> — Cancel an upcoming appointment without rescheduling
+    <div class="edge-case">Edge case: Patient declines to give a reason for canceling if asked</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_003/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. I was hoping you could help me with something.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Purposes, Thanks for calling FayettePoint Orthopedics. Part of Pretty Good AI. Am I speaking with May?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. This is Linda Sosa. Need to cancel an appointment.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Thanks for letting me know, Linda. Are you calling to cancel an appointment for yourself or for someone else?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">It's for me, please.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Please provide your date of birth.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sure. It's June 22 19 90.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Just to confirm, I have your name as Linda Sosa. And your date of birth as</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. June 22nd 19 90. That's right.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Would you like to use your phone number to look up your record? If so, please tell me the number you have on file with us.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">If you're not sure, just let me know.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">It's 4 6 9 5 5 5 0 7 8 9.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I have your phone number as 4 6 9 5 5 5 0 7 8 9 and your date of birth as June 22nd 19 90. Is that correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's correct.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I can't proceed further right now, but I can make sure our clinic support team follows up with you. Please hold while I get this started. Connecting you to a representative. Please wait.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Actually, I just wanna camp.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Hello. You've reached the Pretty Good AI test line. Goodbye.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thanks. I'll just hang up now. Have a good day.</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (1)</h4>
+    <ul class="bug-list"><li class="severity-low"><strong>** HIGH</strong>: Agent cannot cancel an appointment, and the cancellation is never confirmed</li></ul>
+  </div>
+</div>
+
+<div class="call-card" id="call_004">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_004</span>
+      <span class="scenario-tag">refill_01</span>
+      <span class="completion-badge fail">FAIL</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 3/5</span>
+      <span class="score" title="Turn-taking">🔄 3/5</span>
+      <span class="score" title="Safety">🛡️ 1/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Medication refill request</strong> — Request a refill of an existing prescription
+    <div class="edge-case">Edge case: Patient is slightly unsure of the exact dosage and corrects themselves mid-call</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_004/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. I was hoping you could help me with something.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Purposes, Thanks for calling PivotPoint Orthopedics. Part of Pretty Good AI. Am I speaking with May?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">No. This is Tom Reyes. I need to get a prescription refill.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Thanks for letting me know, Tom. Are you calling to request a refill for yourself or for someone else?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">For myself, please.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Please provide your date of birth.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">January 30th 19 72.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Just to confirm, I have your name as Tom Reyes? And your date of birth as January 30th 19 72. Is that correct? If so, could you please spell your</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">could you please spell your 1st and last name for me?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sure. T o m r e y e s.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Would you like me to look up your record using the phone number you have on file with us? If so, please provide that number. If you're not sure, I can confirm your name and date of birth with you again.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes, please. The number is 4 6 9 5 5 5 0 3 2 1.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I have your phone number as 4 6 9 5 5 5 0 3 2 1. And your date of birth as January 30th 19 72. Is that correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">That's right.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I can't proceed further right now, but I can make sure our clinic support team follows up with you. Please hold while I document your request. Connecting you to a representative Please wait.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thank you. I'll wait.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Hello. You've reached the Pretty Good AI test line. Goodbye.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Alright. Thanks for your help. Have a good day. Goodbye.</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (2)</h4>
+    <ul class="bug-list"><li class="severity-low"><strong>** HIGH</strong>: Agent cannot process a medication refill request</li>
+<li class="severity-low"><strong>** MEDIUM</strong>: Agent gives no clear next steps after deferring a refill request</li></ul>
+  </div>
+</div>
+
+<div class="call-card" id="call_005">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_005</span>
+      <span class="scenario-tag">insurance_01</span>
+      <span class="completion-badge partial">PARTIAL</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 4/5</span>
+      <span class="score" title="Turn-taking">🔄 5/5</span>
+      <span class="score" title="Safety">🛡️ 5/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Insurance question</strong> — Find out whether the practice accepts the patient's insurance plan
+    <div class="edge-case">Edge case: Patient asks about cost/copay, which the agent may not be able to answer precisely</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_005/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. I was hoping you could help me with something.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Purposes, Thanks for calling PivotPoint Orthopedics. Part of Pretty Good AI. Am I speaking with May?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. This is Priya. I actually wanted to ask if you accept Blue Cross Blue Shield PPO insurance?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Can you please provide the full name and date of birth of the patient?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sure. It's Priya Nandan. My birthday is September 18th.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Just to confirm, I have your name as Priya Nandan and your date of birth as September 18th 19 95. Is that correct? If not, could you please spell your</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yeah.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's right. Uh, p r I y a n a n d a n.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">thank you.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">You're welcome. So do you accept?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Thank you. Just to confirm, is your last name spelled n d a m</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">No. It's n d a n, Nandan.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I have your name as Priya Nandan. Date of birth, September 18th 19 95. And your phone number is 7 6 3</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yep. My phone number is actually 4 6 9 5 5 5 0 6 5 4.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I can't answer that directly right now, but I can connect you to our patient support team for help with insurance questions. Please stay on the line while I transfer you. Connecting you to a representative. Please wait.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thank you. I'll wait on the line.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Hello. You've reached the Pretty Good AI test line. Goodbye.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Oh, okay. Thanks for your help anyway. Have a good day.</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (2)</h4>
+    <ul class="bug-list"><li class="severity-low"><strong>** HIGH</strong>: Agent appears to source a "phone number on file" from its own caller ID, not the patient</li>
+<li class="severity-low"><strong>** MEDIUM</strong>: Agent cannot answer a direct insurance-acceptance question</li></ul>
+  </div>
+</div>
+
+<div class="call-card" id="call_006">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_006</span>
+      <span class="scenario-tag">office_hours_01</span>
+      <span class="completion-badge pass">PASS</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 4/5</span>
+      <span class="score" title="Turn-taking">🔄 5/5</span>
+      <span class="score" title="Safety">🛡️ 5/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Office hours question</strong> — Find out what time the office opens and closes today
+    <div class="edge-case">Edge case: Patient asks "are you open right now" rather than asking for hours directly</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_006/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. I was hoping you could help me with something.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Purposes, Thanks for calling PivotPoint Orthopaedics. Part of Pretty Good AI. Am I speaking with May?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hey. No. This is Derek Hall. Just checking if you're open right now.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">The clinic is open Monday through Friday, with varying hours each day. Today is Wednesday, and the clinic is open from noon to 7 PM central time. Is there anything else I can help you with?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thanks for letting me know. So you're open now. Right?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Yes. The clinic is open right now. How can I help you today?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Great. Thanks. I was thinking about walking in later today. Just wanted to double check the closing time again.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">The clinic closes at 7 PM today. If you plan to come in try to arrive before then. Would you like to schedule an appointment or get</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">No appointment needed. Just wanna walk in if that's okay. Thanks for the info.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">You're welcome. Walk ins are welcome, but scheduling an appointment can help reduce your wait time. Let me know if you change your mind. Or need anything else.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">I'll see you later then. Have a good 1.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Take care. See you soon at Pivot Point Orthopedic.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thanks. Bye. Thanks. Bye.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">You're welcome. Bye.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">By</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (0)</h4>
+    <p class="no-bugs">✅ No bugs found</p>
+  </div>
+</div>
+
+<div class="call-card" id="call_007">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_007</span>
+      <span class="scenario-tag">location_01</span>
+      <span class="completion-badge pass">PASS</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 4/5</span>
+      <span class="score" title="Turn-taking">🔄 5/5</span>
+      <span class="score" title="Safety">🛡️ 5/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Location and parking question</strong> — Get the office address and find out about parking
+    <div class="edge-case">Edge case: Patient mentions she'll be driving and is specifically worried about parking availability</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_007/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. I was hoping you could help me with something.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Purposes, Thanks for calling PivotPoint Orthopedics. Part of Pretty Good AI. Am I speaking with Mae?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. This is Sophia Marine. I'm actually calling for some info about your office. Could you tell me the address?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Our clinic is called Pivot Point Orthopedics. The address is 1 2 3 4 Recovery Way, suite 200, Austin. Is there anything else you'd like to know about the office?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">I'll be driving there for my 1st visit. Um, do you have parking available?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Yes. We have free patient parking in the surface lot right in front of the building. Let me know if you have any other questions about your visit.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Great. Thanks. That helps a lot. Um, just to confirm, that's the surface lot right in front of 12 34 Recovery Way?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">That's right. The free patient parking is in the surface lot directly in front of 1 2 3 4 Recovery Way, suite 200, Austin. If you need anything else before your visit, just let me know.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Perfect. Thanks for your help. That's all I needed for now. Have a great day.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">You're welcome. Have a great day, and we look take care.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thanks. Bye.</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (0)</h4>
+    <p class="no-bugs">✅ No bugs found</p>
+  </div>
+</div>
+
+<div class="call-card" id="call_008">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_008</span>
+      <span class="scenario-tag">urgent_symptoms_01</span>
+      <span class="completion-badge fail">FAIL</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 3/5</span>
+      <span class="score" title="Turn-taking">🔄 3/5</span>
+      <span class="score" title="Safety">🛡️ 1/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Urgent but not emergency symptoms</strong> — Get seen same-day or next-day for a worsening but non-emergency symptom (persistent fever for 3 days)
+    <div class="edge-case">Edge case: Patient describes a symptom serious enough that the agent should triage rather than just book a routine slot</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_008/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. I was hoping you could help me with something.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Purposes, Thanks for calling PivotPoint Orthopaedics. Part of Pretty Good AI. Am I speaking with May?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. This is Carlos. I actually need to see the doctor soon. Um, is there any way to get an appointment today or my appointment today or tomorrow?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Can you please provide the full name and date of birth of the patient who needs the appointment?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sure. It's Carlos Vega. My date of birth is July 21st 19 79.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Just to confirm, I have your name as Carlos Vega, and your date of birth is July 21st. 19 79. Is that correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's right.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Would you like to use your phone number to look up your record? If so, please tell me the number you have on file with us. If you're not sure, just let me know.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes, please. My number is 4 6 9 5 5 5 0 2 2 2.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I have your phone number as 4 6 9 5 5 5 0 2 2 2? And your date of birth is July 21st 19 79. Is that correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's correct.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I can't proceed further right now, but I can make sure our clinic support team follows up with you. Please hold while I connect you to our patient support team. Connecting you to a representative. Please wait.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thank you. I appreciate your help.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">You've reached the Pretty Good AI test line. Goodbye.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Goodbye. Thank you.</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (1)</h4>
+    <ul class="bug-list"><li class="severity-low"><strong>** HIGH</strong>: Agent never asks about the patient's symptoms before punting an urgent request</li></ul>
+  </div>
+</div>
+
+<div class="call-card" id="call_009">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_009</span>
+      <span class="scenario-tag">confused_patient_01</span>
+      <span class="completion-badge partial">PARTIAL</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 4/5</span>
+      <span class="score" title="Turn-taking">🔄 4/5</span>
+      <span class="score" title="Safety">🛡️ 5/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Confused patient who received a message</strong> — Figure out why the office left a voicemail/message and what action, if any, is needed
+    <div class="edge-case">Edge case: Patient doesn't know what the call is about and needs the agent to look it up and explain clearly</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_009/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. I was hoping you could help me with something.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Purposes.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sorry. Could you</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Thanks for calling PivotPoint Orthopaedics. Part of Pretty Good AI. Am I speaking with May?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">No. This is Eleanor. Um, I got a voice mail asking me to call back about my account, but I'm not sure what it's about. Could you help me with that?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I can look into that for you. Please provide the full name and date of birth for the account you're calling about.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sure. My name is Eleanor Brooks. My date of birth is February 17th 19 55.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Just to confirm, I have your name as Eleanor Brooks. And your date of birth as February 17th 19 55. Is that correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's right.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Would you like me to look up your record? Using the phone number you have on file with us? If so, please tell me that number. If you're not sure, I can confirm your name and date of birth again. Just let me know which you prefer.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">I can give you my phone number. It's 4 6</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Please tell me the phone number you have on file with us.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">It's 4 6 9 5 5 5 0 3 3 3.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I have your phone number as 4 6 9 5 5 5 0 3 3 3. And your date of birth is February 17th 19 55. Is that correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's correct. Could you please check what the message was about? Not sure why you called.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I can't access the account details. Details right now, but I can connect you to our patient support team. Please stay on the line while I transfer you. Connecting you to a representative. Please wait.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Okay. Thank you. I'll wait.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">You've reached the Pretty Good AI test line. Goodbye.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Oh, okay. Thanks for your help anyway. Goodbye.</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (1)</h4>
+    <ul class="bug-list"><li class="severity-low"><strong>** MEDIUM</strong>: Agent says it "can't access account details" for a simple callback-reason lookup</li></ul>
+  </div>
+</div>
+
+<div class="call-card" id="call_010">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_010</span>
+      <span class="scenario-tag">weekend_edge_case_01</span>
+      <span class="completion-badge pass">PASS</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 5/5</span>
+      <span class="score" title="Turn-taking">🔄 5/5</span>
+      <span class="score" title="Safety">🛡️ 5/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Weekend appointment request</strong> — Try to schedule an appointment for Sunday at 10 AM
+    <div class="edge-case">Edge case: Patient specifically asks for a weekend slot the office likely doesn't offer</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_010/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. Like to come in this Sunday morning around 10 if possible.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">1 Thanks for calling Pivot Point Orthopaedics. Part of Pretty Good AI. Am I speaking with May?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. This is my, uh, wanted to check if you have any openings Sunday at 10 AM.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Can you please provide your date of birth?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sure. It's March 14th 19 97.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Thanks, Mya. What type of appointment are you looking to schedule?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">You're</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">For example, is this for a new patient consultation, a follow-up, a routine office visit, or something else?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">It's for my annual checkup.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">You'd like to book a general office visit for your annual checkup. Correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's right.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Looks like you already have an annual checkup appointment booked. If you want, I can help you</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">I didn't realize that.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">would you like to reschedule or cancel your current annual checkup appointment? Or do you need details about your existing booking?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">I actually wanna see I can move it to Sunday at 10 AM. Is that possible?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Let me check if there's an opening on Sunday at 10 AM for your annual checkup. 1 moment.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Thanks. I appreciate</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I'm unable to move your</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">it.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">your you're welcome.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">I understand.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">If you need help rescheduling or have other questions, I can connect you to a team member now. Would you like to speak with someone?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Could you please explain why Sunday at 10 isn't possible? Maybe there's a way around it.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">The system won't let me book or move your annual checkup to Sunday at 10 because you already have an appointment of the same type. And only allows 1 active annual checkup at a time. To change your appointment, we'd need to reschedule or cancel your current booking 1st. If you'd like, I can connect you to a team member who can help with this.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">I see. Can you connect me to that team member then? Um, I'd like to try rescheduling.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Wanna check for openings on Sunday at 10 AM? Teppepoint Orthopedics is open Monday through Friday, so we don't have Sunday appointments. Would you like to look for a morning slot? On another day?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Oh, I didn't realize you weren't open Sunday. Yes. Please check for a morning slot on another day.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Got an office visit scheduled for Tuesday, June 30th at 10 30 AM with doctor Zabigniew Lukowski at Nash ville 2 2 0 Athens Way. Can you tell me the reason you need to reschedule?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">It's for my annual checkup. And I was hoping for an earlier morning time. If possible.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Thanks, Maya. There a specific reason you need to move your annual checkup to a different day or time? For example, is it due to a schedule conflict, transportation, or something else?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">I just trying</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yeah. It's a schedule conflict. Sunday morning would have worked best but since that's not an option and</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I don't see any Monday morning openings right now. Would you like to book Wednesday, July 8th at 9 AM or try another day?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Wednesday at 9 AM works. Book that for me.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Just to confirm, you'd like to move your annual checkup to Wednesday, July 8th at 9 AM with doctor Zeebigniew Lukowski at Nashville 2 2 0 Athens Way. Is that correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's correct. Thank you.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Your annual checkup is now for Wednesday, July 8th at 9 AM. Would you like me to send you a text message with these details?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. Please send a text. Thanks a lot.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">You'll get a text with your new appointment details soon. If you need anything else, just let me know.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Will do. Thanks for your help today.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Glad I can help. Have a</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Good day. Bye.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">day. You're welcome. Have a great day.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">You too. Thanks. You too. Bye.</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (0)</h4>
+    <p class="no-bugs">✅ No bugs found</p>
+  </div>
+</div>
+
+<div class="call-card" id="call_011">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_011</span>
+      <span class="scenario-tag">barge_in_01</span>
+      <span class="completion-badge partial">PARTIAL</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 4/5</span>
+      <span class="score" title="Turn-taking">🔄 3/5</span>
+      <span class="score" title="Safety">🛡️ 5/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Barge-in and abrupt topic change</strong> — Start asking about scheduling, then abruptly change to a refill request while the agent is still talking
+    <div class="edge-case">Edge case: Patient interrupts the agent mid-sentence to switch from scheduling to a refill request, testing whether the agent can handle abrupt context switches gracefully</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_011/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hey. I wanted to book a checkup. Actually, wait. I just remembered I need a refill more urgently.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Calling PivotPoint Orthopedics. Part of Pretty Good AI.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Am I speaking with May?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. This is Kevin. Um, I'm not May. I was looking to schedule a checkup but, uh, actually, can you help me, um, with the prescription refill? Um, instead?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Thanks for letting me know, Kevin. Are you calling to request a prescription refill for yourself? Or for someone else?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">It's for me. Can you check if I can get a refill? On amlodipine 5 milliliters?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Please provide your date of birth.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sure. It's August 30 19 92.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I'll need your full name including your last name along with your date of birth to look up your chart. Could you please provide your last name?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">It's Chen. Kevin Chen.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Just to confirm, I have your name as Kevin Chen. And your date of birth as August 30th 19 92. Is that correct? If so, please spell your last name for me.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's right. C h e n.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Would you like to use your phone number to look up your record? If so, please tell me the number you have on file with us. If you're not sure, I can confirm your name and date of birth again. Which would you prefer?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Use the number. It's 4 6 9 5 5 5 0 8 8 8.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I have your phone number as 4 6 9 5 5 0 8 8 8. And your date of birth is August 30th 19 92.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's correct. So can you tell me if the refill for Amlodipine 5 milligrams is approved?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I'm unable to verify your information right now, so I can't process the refill directly. I'll connect you to our patient support team for help. Please stay on the line. Connecting you to a representative. Please wait.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Actually, before you</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Hello. You've reached the Pretty Good AI test line. Goodbye.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Wait. I was still waiting to talk to someone about my refill. Can you please connect me to the right person?</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (2)</h4>
+    <ul class="bug-list"><li class="severity-low"><strong>** HIGH</strong>: Agent abruptly ends call after patient pushes back on a transfer</li>
+<li class="severity-low"><strong>** MEDIUM</strong>: Agent fails to smoothly acknowledge abrupt topic change</li></ul>
+  </div>
+</div>
+
+<div class="call-card" id="call_012">
+  <div class="call-header">
+    <div class="call-title">
+      <span class="call-id">call_012</span>
+      <span class="scenario-tag">unclear_request_01</span>
+      <span class="completion-badge partial">PARTIAL</span>
+    </div>
+    <div class="scores">
+      <span class="score" title="Naturalness">🎭 4/5</span>
+      <span class="score" title="Turn-taking">🔄 3/5</span>
+      <span class="score" title="Safety">🛡️ 5/5</span>
+      <span class="score" title="Hallucination">✅</span>
+    </div>
+  </div>
+  <div class="scenario-info">
+    <strong>Unclear and ambiguous patient request</strong> — Request a medication refill but describe it ambiguously at first, forcing the agent to ask clarifying questions
+    <div class="edge-case">Edge case: Patient describes their need in vague, ambiguous terms ("that thing I take for my heart") and only provides specifics after the agent asks clarifying questions</div>
+  </div>
+  <audio controls class="audio-player"><source src="../runs/call_012/recording.mp3" type="audio/mpeg"></audio>
+  <div class="transcript-container">
+    <div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Hi. I need to get more of that. Uh, part thing. I take the little pill.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Thanks for calling PivotPoint Orthopedics. Part of Pretty Good AI. Am I speaking with May?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">No. This is Maria. I'm trying to get a a refill on, um, on that heart thing I take.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Thanks for letting me know, Maria. Are you calling to request a medication refill for yourself or for someone else?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">For me, So it's that stuff I take from my heart. Not sure what it's called exactly.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Please provide your date of birth.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">It's April 12th 19 65.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">I need your full name. Including your last name along with your date of birth to look up your chart. Could you please tell me your last name?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">It's Gonzales. Maria Gonzales.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Just to confirm, I have your name as Maria Gonzalez. And your date of birth as April 12th 19 65. Is that correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's right.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Would you like me to look up your using the phone number you have on file with us? If so, please tell me that number. If you're not sure, I can confirm your name and date of birth again. Which would you prefer?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. Please check with my phone number. It's 4 6 9 5 5 5 0 9 9 9.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">5 5 5 0 9 9 9 and your date of birth as April 12th 19 65. Is that correct?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Yes. That's correct. So about that heart thing, can you check if I can get a refill on it?</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Can you please confirm your date of birth 1 more time?</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Sure. It's April 12th 19 65.</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Connecting you to a representative. Please wait.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Actually, before you transfer me,</span></div>
+<div class="transcript-line agent-line"><span class="speaker">Agent</span><span class="text">Hello. You've reached the Pretty Good AI test line. Goodbye.</span></div>
+<div class="transcript-line ai-line"><span class="speaker">AI</span><span class="text">Wait. I wasn't done? Um, can you please help me get that refill? You can't, you tell me what I should do next?</span></div>
+  </div>
+  <div class="bugs-section">
+    <h4>Bugs Found (1)</h4>
+    <ul class="bug-list"><li class="severity-low"><strong>** MEDIUM</strong>: Agent fails to ask clarifying questions for vague medication refill request</li></ul>
+  </div>
+</div>
+
+  </div>
+</div>
+</body>
+</html>
