@@ -38,7 +38,7 @@ independent of any configuration value.
 
 ## Running
 
-Run all 10 scenarios (places 10 real phone calls, ~1-3 min each):
+Run all 12 scenarios (places 12 real phone calls, ~1-3 min each):
 
 ```bash
 python run_calls.py
@@ -82,6 +82,6 @@ source venv/bin/activate
 pytest
 ```
 
-Tests cover scenario loading/validation, prompt building, storage, the Vapi caller's
+Tests cover scenario loading/validation (12 scenarios including edge cases), prompt building, storage, the Vapi caller's
 safety check and polling logic (all HTTP calls mocked), and the evaluator/report
 generator. They do not place real calls or call OpenAI/Vapi.
